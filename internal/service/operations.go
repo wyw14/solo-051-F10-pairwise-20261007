@@ -28,6 +28,8 @@ type Runtime struct {
 	VacuumTelemetry *vacuum.Telemetry
 	RevisionStore   *recipe.RevisionStore
 	InterlockAudit  *interlock.Audit
+	Alarms          *interlock.Monitor
+	Overrides       *interlock.Overrides
 	Shutter         *shutter.Controller
 	Sequence        int64
 	StartedAt       time.Time
@@ -36,7 +38,7 @@ type Runtime struct {
 func NewRuntime() *Runtime {
 	driver := shutter.NewDriver()
 	feedback := shutter.NewFeedback()
-	return &Runtime{Monitor: optical.NewMonitor(), Window: optical.NewThicknessWindow(128), Broadcast: optical.NewBroadcaster(), Traces: journal.NewTraceStore(), Incidents: journal.NewIncidentStore(), Timeline: run.NewTimeline(), VacuumTelemetry: vacuum.NewTelemetry(128), RevisionStore: recipe.NewRevisionStore(), InterlockAudit: interlock.NewAudit(), Shutter: shutter.NewController(driver, feedback), StartedAt: time.Now().UTC()}
+	return &Runtime{Monitor: optical.NewMonitor(), Window: optical.NewThicknessWindow(128), Broadcast: optical.NewBroadcaster(), Traces: journal.NewTraceStore(), Incidents: journal.NewIncidentStore(), Timeline: run.NewTimeline(), VacuumTelemetry: vacuum.NewTelemetry(128), RevisionStore: recipe.NewRevisionStore(), InterlockAudit: interlock.NewAudit(), Alarms: interlock.NewMonitor(), Overrides: interlock.NewOverrides(), Shutter: shutter.NewController(driver, feedback), StartedAt: time.Now().UTC()}
 }
 
 func (r *Runtime) NextSequence() int64 {

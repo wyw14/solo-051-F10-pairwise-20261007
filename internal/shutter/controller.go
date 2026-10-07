@@ -27,7 +27,7 @@ func (c *Controller) Open(ctx context.Context) error {
 	if err := c.driver.Open(); err != nil {
 		return fmt.Errorf("open shutter: %w", err)
 	}
-	c.feedback.Update("open")
+	c.feedback.Update(StateOpen)
 	c.record("open")
 	return nil
 }
@@ -36,9 +36,15 @@ func (c *Controller) Close(ctx context.Context) error {
 	if err := CloseSafely(ctx, c.driver); err != nil {
 		return fmt.Errorf("close shutter: %w", err)
 	}
-	c.feedback.Update("closed")
+	c.feedback.Update(StateClosed)
 	c.record("closed")
 	return nil
+}
+
+// State reports the last confirmed shutter position from feedback.
+func (c *Controller) State() string {
+	state, _ := c.feedback.State()
+	return state
 }
 
 func (c *Controller) record(value string) {

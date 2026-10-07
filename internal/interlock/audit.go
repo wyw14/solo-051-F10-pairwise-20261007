@@ -8,11 +8,14 @@ import (
 )
 
 type Decision struct {
-	ID      model.ID  `json:"id"`
-	RunID   model.ID  `json:"run_id"`
-	Allowed bool      `json:"allowed"`
-	Reasons []string  `json:"reasons"`
-	At      time.Time `json:"at"`
+	ID         model.ID  `json:"id"`
+	RunID      model.ID  `json:"run_id"`
+	Allowed    bool      `json:"allowed"`
+	Reasons    []string  `json:"reasons"`
+	Checks     []Check   `json:"checks"`
+	Generation int64     `json:"generation,omitempty"`
+	Override   *Override `json:"override,omitempty"`
+	At         time.Time `json:"at"`
 }
 
 type Audit struct {
@@ -40,6 +43,12 @@ func (a *Audit) Decisions() []Decision {
 	result := make([]Decision, len(a.decisions))
 	copy(result, a.decisions)
 	return result
+}
+
+// RecordDecision stores a decision produced by Decide.
+func (a *Audit) RecordDecision(decision Decision) Decision {
+	a.decisions = append(a.decisions, decision)
+	return decision
 }
 
 func (a *Audit) Validate(decision Decision) error {

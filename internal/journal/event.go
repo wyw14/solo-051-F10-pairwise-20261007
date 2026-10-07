@@ -11,3 +11,6 @@ func RunStateChanged(run model.Run, previous model.RunState) model.Event {
 func IncidentRaised(incident model.Incident) model.Event {
 	return model.NewEvent("incident", incident.RunID, map[string]any{"severity": incident.Severity, "message": incident.Message})
 }
+func OverrideGranted(runID model.ID, operator string, generation int64) model.Event {
+	return model.NewEvent("interlock.override", runID, map[string]any{"operator": operator, "generation": generation})
+}

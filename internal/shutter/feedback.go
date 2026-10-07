@@ -5,13 +5,18 @@ import (
 	"time"
 )
 
+const (
+	StateOpen   = "open"
+	StateClosed = "closed"
+)
+
 type Feedback struct {
 	mu      sync.RWMutex
 	state   string
 	changed time.Time
 }
 
-func NewFeedback() *Feedback { return &Feedback{state: "closed", changed: time.Now().UTC()} }
+func NewFeedback() *Feedback { return &Feedback{state: StateClosed, changed: time.Now().UTC()} }
 func (f *Feedback) Update(state string) {
 	f.mu.Lock()
 	f.state = state
