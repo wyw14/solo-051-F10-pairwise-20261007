@@ -131,7 +131,7 @@ func (s *Service) Audit(ctx context.Context, runtime *Runtime) AuditReport {
 		admission.Release(2)
 	}
 	report.Checks["source_admission"] = fmt.Sprintf("used=%d", admission.Used())
-	starter := run.Starter{Registry: s.Runs, Vacuum: s.Vacuum}
+	starter := run.Starter{Registry: s.Runs, Vacuum: s.Vacuum, Shutter: runtime.Shutter.Feedback(), Source: s.Source, Alarms: runtime.InterlockMonitor.Alarms, Reviews: runtime.PermitReviews, Audit: runtime.InterlockAudit}
 	_ = starter
 	report.Checks["run_registry"] = fmt.Sprintf("runs=%d", len(s.Runs.List()))
 	runtime.VacuumTelemetry.Record(s.Vacuum.Pressure(), true)

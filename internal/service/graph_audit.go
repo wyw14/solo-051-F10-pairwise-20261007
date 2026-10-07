@@ -63,7 +63,7 @@ func ExerciseProductionGraph(ctx context.Context, svc *Service, runtime *Runtime
 	result["state_event"] = event.Kind
 	runs := svc.Runs.List()
 	if len(runs) > 0 {
-		starter := &run.Starter{Registry: svc.Runs, Vacuum: svc.Vacuum}
+		starter := &run.Starter{Registry: svc.Runs, Vacuum: svc.Vacuum, Shutter: runtime.Shutter.Feedback(), Source: svc.Source, Alarms: runtime.InterlockMonitor.Alarms, Reviews: runtime.PermitReviews, Audit: runtime.InterlockAudit}
 		result["start_coating"] = ExecuteError(starter.StartCoating(ctx, runs[0].ID))
 		scheduled, err := svc.Schedule(ctx, runtime, runs[0].ID, []model.Layer{{Number: 1, Material: "SiO2", TargetNanometers: 1, RateNanometers: 1}})
 		result["schedule"] = fmt.Sprintf("items=%d error=%s", len(scheduled), ExecuteError(err))

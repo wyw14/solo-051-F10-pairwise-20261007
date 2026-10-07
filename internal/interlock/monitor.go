@@ -16,3 +16,21 @@ func (m *Monitor) Alarms() []string {
 	copy(out, m.alarms)
 	return out
 }
+
+// Clear removes every active alarm with the given name and reports whether
+// at least one was removed.
+func (m *Monitor) Clear(name string) bool {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	kept := m.alarms[:0]
+	removed := false
+	for _, alarm := range m.alarms {
+		if alarm == name {
+			removed = true
+			continue
+		}
+		kept = append(kept, alarm)
+	}
+	m.alarms = kept
+	return removed
+}

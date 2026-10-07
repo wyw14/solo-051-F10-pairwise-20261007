@@ -18,25 +18,27 @@ import (
 )
 
 type Runtime struct {
-	mu              sync.RWMutex
-	Monitor         *optical.Monitor
-	Window          *optical.ThicknessWindow
-	Broadcast       *optical.Broadcaster
-	Traces          *journal.TraceStore
-	Incidents       *journal.IncidentStore
-	Timeline        *run.Timeline
-	VacuumTelemetry *vacuum.Telemetry
-	RevisionStore   *recipe.RevisionStore
-	InterlockAudit  *interlock.Audit
-	Shutter         *shutter.Controller
-	Sequence        int64
-	StartedAt       time.Time
+	mu               sync.RWMutex
+	Monitor          *optical.Monitor
+	Window           *optical.ThicknessWindow
+	Broadcast        *optical.Broadcaster
+	Traces           *journal.TraceStore
+	Incidents        *journal.IncidentStore
+	Timeline         *run.Timeline
+	VacuumTelemetry  *vacuum.Telemetry
+	RevisionStore    *recipe.RevisionStore
+	InterlockAudit   *interlock.Audit
+	InterlockMonitor *interlock.Monitor
+	PermitReviews    *interlock.OverrideBook
+	Shutter          *shutter.Controller
+	Sequence         int64
+	StartedAt        time.Time
 }
 
 func NewRuntime() *Runtime {
 	driver := shutter.NewDriver()
 	feedback := shutter.NewFeedback()
-	return &Runtime{Monitor: optical.NewMonitor(), Window: optical.NewThicknessWindow(128), Broadcast: optical.NewBroadcaster(), Traces: journal.NewTraceStore(), Incidents: journal.NewIncidentStore(), Timeline: run.NewTimeline(), VacuumTelemetry: vacuum.NewTelemetry(128), RevisionStore: recipe.NewRevisionStore(), InterlockAudit: interlock.NewAudit(), Shutter: shutter.NewController(driver, feedback), StartedAt: time.Now().UTC()}
+	return &Runtime{Monitor: optical.NewMonitor(), Window: optical.NewThicknessWindow(128), Broadcast: optical.NewBroadcaster(), Traces: journal.NewTraceStore(), Incidents: journal.NewIncidentStore(), Timeline: run.NewTimeline(), VacuumTelemetry: vacuum.NewTelemetry(128), RevisionStore: recipe.NewRevisionStore(), InterlockAudit: interlock.NewAudit(), InterlockMonitor: interlock.NewMonitor(), PermitReviews: interlock.NewOverrideBook(), Shutter: shutter.NewController(driver, feedback), StartedAt: time.Now().UTC()}
 }
 
 func (r *Runtime) NextSequence() int64 {

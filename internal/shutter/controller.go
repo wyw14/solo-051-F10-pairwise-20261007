@@ -52,3 +52,5 @@ func (c *Controller) Commands() []string {
 	defer c.mu.Unlock()
 	return append([]string(nil), c.commands...)
 }
+
+func (c *Controller) Feedback() *Feedback { return c.feedback }

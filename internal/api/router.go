@@ -7,7 +7,10 @@ import (
 )
 
 func NewRouter(svc *service.Service) http.Handler {
-	runtime := service.NewRuntime()
+	return newRouter(svc, service.NewRuntime())
+}
+
+func newRouter(svc *service.Service, runtime *service.Runtime) http.Handler {
 	book := checkpointBook()
 	r := chi.NewRouter()
 	r.Get("/healthz", health)
@@ -26,6 +29,10 @@ func NewRouter(svc *service.Service) http.Handler {
 	r.Post("/api/layers/run", runLayer(svc, runtime))
 	r.Post("/api/runs/{runID}/recover", recoverRun(svc, runtime))
 	r.Post("/api/runs/{runID}/release", releaseRun(svc, runtime))
+	r.Get("/api/runs/{runID}/permit", permitDecision(svc, runtime))
+	r.Post("/api/runs/{runID}/permit/review", permitReview(svc, runtime))
+	r.Post("/api/interlock/alarms", raiseAlarm(svc, runtime))
+	r.Delete("/api/interlock/alarms/{name}", clearAlarm(svc, runtime))
 	r.Get("/api/runs/{runID}/timeline", timeline(svc, runtime))
 	r.Post("/api/runs/{runID}/checkpoints", captureCheckpoint(svc, runtime, book))
 	r.Get("/api/runs/{runID}/checkpoints", listCheckpoints(svc, book))
